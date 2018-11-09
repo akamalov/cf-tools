@@ -2,7 +2,7 @@ FROM ubuntu:18.04
 LABEL maintainer="akamalov@gmail.com"
 
 ENV LAST_UPDATE=2018-11-08
-ENV GOROOT="/usr/local/go" 
+ENV GOROOT="/usr/local/go"
 ENV GOPATH="$HOME/Projects"
 ENV PATH="$GOPATH/bin:$GOROOT/bin:$PATH"
 ENV GOOS="linux"
@@ -32,7 +32,7 @@ RUN \
   curl -k -L "https://github.com/pivotalservices/cfops-nfs-plugin/releases/download/v0.0.4/cfops-nfs-plugin_binaries.tgz" | tar -zx && \
   chmod 755 pipeline/output/builds/linux64/cfops-nfs-plugin && \
   mv pipeline/output/builds/linux64/cfops-nfs-plugin . && \
-  gem install cf-uaac 
+  gem install cf-uaac
 
 WORKDIR /tmp
 RUN \
@@ -45,7 +45,9 @@ RUN \
   echo "export GOROOT=/usr/local/go" >> ~/.bashrc && \
   echo "export GOPATH=$HOME/Projects" >> ~/.bashrc && \
   echo "export PATH=$GOPATH/bin:$GOROOT/bin:$PATH" >> ~/.bashrc && \
-  mkdir -p ~/Projects/{bin, src, pkg} && \
+  mkdir -p ~/Projects/bin && \
+  mkdir -p ~/Projects/src && \
+  mkdir -p ~/Projects/pkg && \
   /bin/bash -c "source ~/.bashrc" && \
   go get -insecure github.com/cloudfoundry/cli && \
   go get -insecure github.com/krujos/download_droplet_plugin
@@ -54,12 +56,18 @@ WORKDIR $GOPATH/src/github.com/krujos/download_droplet_plugin
 RUN \
   go build && \
   cf install-plugin -f $GOPATH/bin/download_droplet_plugin && \
-  go get code.cloudfoundry.org/cfdot 
+  go get code.cloudfoundry.org/cfdot
 
-WORKDIR  $GOPATH/src/code.cloudfoundry.org/cfdot 
+WORKDIR  $GOPATH/src/code.cloudfoundry.org/cfdot
 RUN \
   GOOS=linux && \
   go build . && \
   mv cfdot /usr/bin/ && \
-  chmod 755 /usr/bin/cfdot && \
+  chmod 755 /usr/bin/cfdot
+
+WORKDIR  $GOPATH/src/github.com/SUSE
+RUN \
+  curl -L -o cf-plugin-backup https://github.com/SUSE/cf-plugin-backup/releases/download/1.0.8/cf-plugin-backup-1.0.8.0.g9e8438e.linux-amd64 && \
+  cf install-plugin ./cf-plugin-backup -f && \
+  cf install-plugin -r CF-Community "Usage Report" -f && \
   pip install --upgrade --user awscli
