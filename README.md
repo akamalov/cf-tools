@@ -11,6 +11,8 @@ Container image contains the following tools:
 - Go 1.11.2
 - CF CLI 'Download Droplet' plugin
 - AWS CLI
+- SUSE Backup Plugin
+- Usage Report Plugin
 
 Dockerfile was originally taken from https://github.com/pivotalservices/concourse-pipeline-samples/blob/master/common/docker-images/multi-purpose-ubuntu/Dockerfile and it was modified and streamlined.
 
