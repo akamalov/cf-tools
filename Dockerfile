@@ -32,15 +32,11 @@ RUN \
   curl -k -L "https://github.com/pivotalservices/cfops-nfs-plugin/releases/download/v0.0.4/cfops-nfs-plugin_binaries.tgz" | tar -zx && \
   chmod 755 pipeline/output/builds/linux64/cfops-nfs-plugin && \
   mv pipeline/output/builds/linux64/cfops-nfs-plugin . && \
-  gem install cf-uaac
-
-WORKDIR /tmp
-RUN \
+  gem install cf-uaac && \
+  cd  /tmp &&  \
   curl -L -k https://github.com/gohugoio/hugo/releases/download/v0.51/hugo_0.51_Linux-64bit.tar.gz | tar -zx -C /usr/bin/ | xargs -0 chmod 755 /usr/bin/hugo && \
   rm /usr/bin/README.md /usr/bin/LICENSE && \
-  curl -k -L -o /usr/bin/mc https://dl.minio.io/client/mc/release/linux-amd64/mc  | xargs -0 chmod 755 /usr/bin/mc
-
-RUN \
+  curl -k -L -o /usr/bin/mc https://dl.minio.io/client/mc/release/linux-amd64/mc  | xargs -0 chmod 755 /usr/bin/mc && \
   curl -k -L https://dl.google.com/go/go1.11.2.linux-amd64.tar.gz | tar -zx -C /usr/local/ && \
   echo "export GOROOT=/usr/local/go" >> ~/.bashrc && \
   echo "export GOPATH=$HOME/Projects" >> ~/.bashrc && \
@@ -50,24 +46,10 @@ RUN \
   mkdir -p ~/Projects/pkg && \
   /bin/bash -c "source ~/.bashrc" && \
   go get -insecure github.com/cloudfoundry/cli && \
-  go get -insecure github.com/krujos/download_droplet_plugin
-
-WORKDIR $GOPATH/src/github.com/krujos/download_droplet_plugin
-RUN \
-  go build && \
-  cf install-plugin -f $GOPATH/bin/download_droplet_plugin && \
-  go get code.cloudfoundry.org/cfdot
-
-WORKDIR  $GOPATH/src/code.cloudfoundry.org/cfdot
-RUN \
+  go get code.cloudfoundry.org/cfdot && \
+  cd  $GOPATH/src/code.cloudfoundry.org/cfdot && \
   GOOS=linux && \
   go build . && \
   mv cfdot /usr/bin/ && \
-  chmod 755 /usr/bin/cfdot
-
-WORKDIR  $GOPATH/src/github.com/SUSE
-RUN \
-  curl -L -o cf-plugin-backup https://github.com/SUSE/cf-plugin-backup/releases/download/1.0.8/cf-plugin-backup-1.0.8.0.g9e8438e.linux-amd64 && \
-  cf install-plugin ./cf-plugin-backup -f && \
-  cf install-plugin -r CF-Community "Usage Report" -f && \
+  chmod 755 /usr/bin/cfdot && \
   pip install --upgrade --user awscli
