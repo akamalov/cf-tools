@@ -9,7 +9,6 @@ Container image contains the following tools:
 - CFDOT CLI
 - Minio Client
 - Go 1.11.2
-- CF CLI 'Download Droplet' plugin
 - AWS CLI
 - SUSE Backup Plugin
 - Usage Report Plugin
