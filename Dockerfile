@@ -1,6 +1,4 @@
 FROM ubuntu:18.04
-LABEL maintainer="akamalov@gmail.com"
-
 ENV LAST_UPDATE=2018-11-08
 ENV GOROOT="/usr/local/go"
 ENV GOPATH="$HOME/Projects"
